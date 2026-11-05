@@ -1,0 +1,32 @@
+# codelaw's hooks for the pre-commit framework (https://pre-commit.com). The
+# framework installs codelaw from PyPI at the pinned version into a virtualenv
+# of its own: nothing to build, nothing on PATH. The tag is the version:
+# `rev: v0.4.3` installs codelaw 0.4.3. The pin below is bumped, and the tag
+# pushed, by .github/workflows/bump.yml when PyPI has a newer codelaw.
+
+- id: codelaw-check
+  name: codelaw check
+  description: Check the staged files; an error blocks the commit.
+  entry: codelaw check --staged
+  language: python
+  additional_dependencies: ["codelaw==0.4.3"]
+  types_or: [javascript, jsx, ts, tsx, python, pyi, json, yaml, toml, markdown, css, scss, html]
+  require_serial: true
+
+- id: codelaw-fix
+  name: codelaw fix
+  description: Apply the safe (auto) fixes to the staged files; the framework fails the hook when a file changed, so re-stage and commit again.
+  entry: codelaw fix --staged
+  language: python
+  additional_dependencies: ["codelaw==0.4.3"]
+  types_or: [javascript, jsx, ts, tsx, python, pyi, json, yaml, toml, markdown, css, scss, html]
+  require_serial: true
+
+- id: codelaw-format
+  name: codelaw format
+  description: Format the staged files in place; the framework fails the hook when a file changed, so re-stage and commit again.
+  entry: codelaw format
+  language: python
+  additional_dependencies: ["codelaw==0.4.3"]
+  types_or: [javascript, jsx, ts, tsx, python, pyi, json, yaml, toml, markdown, css, scss, html]
+  require_serial: true

@@ -1,0 +1,42 @@
+# Keeps this mirror at codelaw's latest release (arpitarya/codelaw W-97 step 2):
+# daily, and by hand, it reads codelaw's latest version from PyPI; when the pin
+# in .pre-commit-hooks.yaml differs, it rewrites the pin, the README's `rev`
+# and pyproject's version, commits, and pushes tag v<version>. No action is
+# used but checkout, pinned by SHA; the push uses this repository's own token.
+name: bump
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: bump
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: bump to PyPI's latest codelaw
+        run: |
+          set -euo pipefail
+          latest="$(curl -fsSL https://pypi.org/pypi/codelaw/json | python3 -c 'import json,sys; print(json.load(sys.stdin)["info"]["version"])')"
+          current="$(sed -nE 's/.*"codelaw==([^"]+)".*/\1/p' .pre-commit-hooks.yaml | head -1)"
+          echo "PyPI: $latest · pinned: $current"
+          if [ "$latest" = "$current" ]; then
+            git ls-remote --exit-code --tags origin "refs/tags/v$latest" >/dev/null || { git tag "v$latest" && git push origin "v$latest"; }
+            exit 0
+          fi
+          sed -i -E "s/codelaw==[0-9][^\"]*/codelaw==$latest/g" .pre-commit-hooks.yaml
+          sed -i -E "s/v$current/v$latest/g" README.md .pre-commit-hooks.yaml
+          sed -i -E "s/^version = \".*\"/version = \"$latest\"/" pyproject.toml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "codelaw $latest"
+          git tag "v$latest"
+          git push origin HEAD "v$latest"
+          echo "### bumped to codelaw $latest (tag v$latest)" >> "$GITHUB_STEP_SUMMARY"

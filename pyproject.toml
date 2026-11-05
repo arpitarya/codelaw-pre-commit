@@ -1,0 +1,11 @@
+# pre-commit installs a `language: python` hook's repository with pip, so it
+# needs a project; this one has no code and no dependencies of its own. The
+# engine comes from each hook's `additional_dependencies` (codelaw, exact).
+[project]
+name = "codelaw-pre-commit"
+version = "0.4.3"
+description = "pre-commit hooks that install codelaw from PyPI"
+license = "MIT"
+
+[tool.setuptools]
+py-modules = []
