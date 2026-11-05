@@ -32,7 +32,7 @@ jobs:
             exit 0
           fi
           sed -i -E "s/codelaw==[0-9][^\"]*/codelaw==$latest/g" .pre-commit-hooks.yaml
-          sed -i -E "s/v$current/v$latest/g" README.md .pre-commit-hooks.yaml
+          sed -i -E "s/v${current//./\\.}\b/v$latest/g" README.md .pre-commit-hooks.yaml
           sed -i -E "s/^version = \".*\"/version = \"$latest\"/" pyproject.toml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
