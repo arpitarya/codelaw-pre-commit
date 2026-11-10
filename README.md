@@ -8,7 +8,7 @@ nothing on `PATH`.
 ```yaml
 repos:
   - repo: https://github.com/arpitarya/codelaw-pre-commit
-    rev: v0.4.3
+    rev: v0.5.1
     hooks:
       - id: codelaw-fix
       - id: codelaw-format
@@ -21,7 +21,7 @@ repos:
 | `codelaw-fix` | `codelaw fix --staged` — the safe (auto) fixes | it changed a file (re-stage, commit again) |
 | `codelaw-format` | `codelaw format` on the staged files | it changed a file (re-stage, commit again) |
 
-**The tag is the version:** `rev: v0.4.3` installs `codelaw==0.4.3`. A new
+**The tag is the version:** `rev: v0.5.1` installs `codelaw==0.4.3`. A new
 codelaw release reaches this repository within a day: `.github/workflows/bump.yml`
 reads PyPI's latest version, rewrites the pin, commits and pushes the matching
 tag. `pre-commit autoupdate` then moves your `rev`.
